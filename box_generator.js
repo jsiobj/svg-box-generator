@@ -42,13 +42,13 @@ var TabTools = {
 		console.debug(["Pour une largeur de", length, "et des encoches de", tab_width, "=> Nombre d'encoches :", nb_tabs, "Largeur d'encoche : ", tab_real_width].join(" "));
 
 		if (tab_real_width <= thickness * 1.5) {
-			var msg = ["Attention les encoches resultantes ne sont pas assez larges au vue de l'epasseur de votre materiaux (", largeur_encoche, " &lt; ", materiau, "). Merci d'utiliser une taille d'encoches coherente avec votre boite"].join(" ");
+			var msg = ["Attention les encoches résultantes ne sont pas assez larges à la vue de l'epasseur de votre matériau (", tab_width, "mm < ", thickness, "mm). Merci d'utiliser une taille d'encoches cohérente avec votre boite"].join(" ");
 			alert(msg);
 			throw (msg);
 		}
 
 		if (nb_tabs <= 1) {
-			var msg = ["Attention vous n'aurez aucune encoche sur cette longeur, c'est une mauvaise idée !!! Indiquez une taill d'encoche correcte pour votre taille de boite"].join(" ");
+			var msg = ["Attention vous n'aurez aucune encoche sur cette longeur, c'est une mauvaise idée !!! Indiquez une taille d'encoche correcte pour votre taille de boite"].join(" ");
 			alert(msg);
 			throw (msg);
 		}
@@ -121,31 +121,17 @@ var TabTools = {
 	}
 };
 var SvgTools = {
-	mm2px: function (arr) {
-		console.log(typeof arr);
-		if (typeof arr == 'array' || typeof arr == 'object') {
-			return arr.map(function (point) {
-				return point.map(function (coord) {
-					return coord * 90 / 25.4;
-				});
-			});
-		}
-		if (typeof arr == 'number') {
-			return arr * 90 / 25.4;
-		}
-
-	},
-
+    
 	toPathString: function (arr) {
 		return arr.map(function (point) {
 			return point.join(",")
 		}).join(" ");
 	},
-	addPath: function (str, id, _x, _y) {
+	addPath: function (str, id, _x, _y, lineColor, lineThickness) {
 		var shape = document.createElement("path");
-		shape.setAttribute("style", "fill:#ffffff;stroke:#ff0000");
+		shape.setAttribute("style", "fill:#ffffff;stroke:" + lineColor + ";stroke-width:" + lineThickness);
 		shape.setAttribute("id", id);
-		shape.setAttribute("transform", "translate(" + SvgTools.mm2px(_x) + "," + (SvgTools.mm2px(_y)) + ")");
+		shape.setAttribute("transform", "translate(" + _x + "," + _y + ")");
 		shape.setAttribute("d", "m " + str + " z");
 		layer.appendChild(shape);
 	},
@@ -169,8 +155,15 @@ var SvgTools = {
 		link.click();
 	},
 	setDocumentSize: function (width, depth, height, thickness) {
-		document.getElementById("box").setAttribute("height", SvgTools.mm2px(depth + 2 * height + 4 * thickness));
-		document.getElementById("box").setAttribute("width", SvgTools.mm2px(2 * Math.max(width, depth) + 3 * thickness));
+    
+        var pageHeight = depth + 2 * height + 4 * thickness;
+        var pageWidth =  2 * Math.max(width, depth) + 3 * thickness;
+        
+        console.debug("Page :" + pageHeight + "x" + pageWidth);
+        
+		document.getElementById("box").setAttribute("height", pageHeight + "mm");
+		document.getElementById("box").setAttribute("width", pageWidth + "mm");
+		document.getElementById("box").setAttribute("viewBox", "0 0 " + pageWidth  + " " + pageHeight);
 	}
 };
 
@@ -322,24 +315,24 @@ var Box = {
 		}));
 		return points;
 	},
-	withTop: function (width, depth, height, tab_size, thickness, backlash) {
+	withTop: function (width, depth, height, tab_size, thickness, backlash, lineColor, lineThickness) {
 		SvgTools.clearPathAndLink();
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._bottom(width, depth, tab_size, thickness, backlash))), 'bottom', (1 * thickness), (1 * thickness));
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._bottom(width, depth, tab_size, thickness, backlash))), 'top', (2 * thickness + width), (1 * thickness));
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._front_with_top(width, height, tab_size, thickness, backlash))), 'font', (2 * thickness + width), (2 * thickness + depth));
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._front_with_top(width, height, tab_size, thickness, backlash))), 'back', (1 * thickness), (2 * thickness + depth));
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._side_with_top(depth, height, tab_size, thickness, backlash))), 'left_side', (2 * thickness + depth), (3 * thickness + depth + height));
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._side_with_top(depth, height, tab_size, thickness, backlash))), 'right_side', (1 * thickness), (3 * thickness + depth + height));
+		SvgTools.addPath(SvgTools.toPathString(Box._bottom(width, depth, tab_size, thickness, backlash)), 'bottom', (1 * thickness), (1 * thickness), lineColor, lineThickness);
+		SvgTools.addPath(SvgTools.toPathString(Box._bottom(width, depth, tab_size, thickness, backlash)), 'top', (2 * thickness + width), (1 * thickness), lineColor, lineThickness);
+		SvgTools.addPath(SvgTools.toPathString(Box._front_with_top(width, height, tab_size, thickness, backlash)), 'font', (2 * thickness + width), (2 * thickness + depth), lineColor, lineThickness);
+		SvgTools.addPath(SvgTools.toPathString(Box._front_with_top(width, height, tab_size, thickness, backlash)), 'back', (1 * thickness), (2 * thickness + depth), lineColor, lineThickness);
+		SvgTools.addPath(SvgTools.toPathString(Box._side_with_top(depth, height, tab_size, thickness, backlash)), 'left_side', (2 * thickness + depth), (3 * thickness + depth + height), lineColor, lineThickness);
+		SvgTools.addPath(SvgTools.toPathString(Box._side_with_top(depth, height, tab_size, thickness, backlash)), 'right_side', (1 * thickness), (3 * thickness + depth + height), lineColor, lineThickness);
 		SvgTools.setDocumentSize(width, depth, height, thickness);
 		SvgTools.downloadLink(width, depth, height, thickness);
 	},
-	withoutTop: function (width, depth, height, tab_size, thickness, backlash) {
+	withoutTop: function (width, depth, height, tab_size, thickness, backlash, lineColor, lineThickness) {
 		SvgTools.clearPathAndLink();
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._bottom(width, depth, tab_size, thickness, backlash))), 'bottom', (1 * thickness), (1 * thickness));
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._front_without_top(width, height, tab_size, thickness, backlash))), 'font', (2 * thickness + width), (2 * thickness + depth));
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._front_without_top(width, height, tab_size, thickness, backlash))), 'back', (1 * thickness), (2 * thickness + depth));
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._side_without_top(depth, height, tab_size, thickness, backlash))), 'left_side', (2 * thickness + depth), (3 * thickness + depth + height));
-		SvgTools.addPath(SvgTools.toPathString(SvgTools.mm2px(Box._side_without_top(depth, height, tab_size, thickness, backlash))), 'right_side', (1 * thickness), (3 * thickness + depth + height));
+		SvgTools.addPath(SvgTools.toPathString(Box._bottom(width, depth, tab_size, thickness, backlash)), 'bottom', (1 * thickness), (1 * thickness), lineColor, lineThickness);
+		SvgTools.addPath(SvgTools.toPathString(Box._front_without_top(width, height, tab_size, thickness, backlash)), 'font', (2 * thickness + width), (2 * thickness + depth), lineColor, lineThickness);
+		SvgTools.addPath(SvgTools.toPathString(Box._front_without_top(width, height, tab_size, thickness, backlash)), 'back', (1 * thickness), (2 * thickness + depth), lineColor, lineThickness);
+		SvgTools.addPath(SvgTools.toPathString(Box._side_without_top(depth, height, tab_size, thickness, backlash)), 'left_side', (2 * thickness + depth), (3 * thickness + depth + height), lineColor, lineThickness);
+		SvgTools.addPath(SvgTools.toPathString(Box._side_without_top(depth, height, tab_size, thickness, backlash)), 'right_side', (1 * thickness), (3 * thickness + depth + height), lineColor, lineThickness);
 		SvgTools.setDocumentSize(width, depth, height, thickness);
 		SvgTools.downloadLink(width, depth, height, thickness);
 	}
@@ -358,9 +351,9 @@ function value_of(id) {
 function generate_box() {
 	try {
 		if (document.getElementById('closed').checked) {
-			Box.withTop(value_of('width'), value_of('depth'), value_of('height'), value_of('tabs'), value_of('thickness'), value_of('backlash'));
+			Box.withTop(value_of('width'), value_of('depth'), value_of('height'), value_of('tabs'), value_of('thickness'), value_of('backlash'), document.getElementById('lineColor').value, value_of('lineThickness'));
 		} else {
-			Box.withoutTop(value_of('width'), value_of('depth'), value_of('height'), value_of('tabs'), value_of('thickness'), value_of('backlash'));
+			Box.withoutTop(value_of('width'), value_of('depth'), value_of('height'), value_of('tabs'), value_of('thickness'), value_of('backlash'), document.getElementById('lineColor').value, value_of('lineThickness'));
 		}
 	} catch (e) {
 		console.error(e);

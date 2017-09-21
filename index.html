@@ -45,11 +45,21 @@
 </head>
 
 <body>
-	<div id="svg" style="display:none">
-		<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="177.16536" height="70.866142" id="box" version="1.1" inkscape:version="0.48.3.1 r9886" sodipodi:docname="dessin.svg">
-			<defs id="defs4" />
-			<sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" fit-margin-top="0" fit-margin-left="0" fit-margin-right="0" fit-margin-bottom="0" units="mm" inkscape:window-maximized="1" />
-			<metadata id="metadata7">
+	<div id="svg" style="display: none">
+		<svg
+            xmlns:dc="http://purl.org/dc/elements/1.1/" 
+            xmlns:cc="http://creativecommons.org/ns#" 
+            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+            xmlns:svg="http://www.w3.org/2000/svg"
+            xmlns="http://www.w3.org/2000/svg"
+            width="384mm"              
+            height="199mm"            
+            viewBox="0 0 384 199"      
+            id="box" 
+            version="1.1" 
+          >
+            <defs id="defs4" />
+ 			<metadata id="metadata7">
 				<rdf:RDF>
 					<cc:Work rdf:about="">
 						<dc:format>image/svg+xml</dc:format>
@@ -58,18 +68,42 @@
 					</cc:Work>
 				</rdf:RDF>
 			</metadata>
-			<g inkscape:label="Calque 1" inkscape:groupmode="layer" id="layer1">
-
-			</g>
+            <g id="layer1" />
 		</svg>
 	</div>
+    
+    
 	<h1>Générateur de boites SVG</h1>
 	<p>
 		<em>
-			Génère les plans d'un boite à la taille souhaitée, réalisable à la découpeuse laser, au format SVG (inkscape).
+			Génère les plans d'un boite à la taille souhaitée, réalisable à la découpeuse laser, au format SVG (Compatible inkscape).
 		</em>
 	</p>
+    
 	<fieldset>
+        <h2>Paramètres SVG</h2>
+    	<p>
+    		<em>
+    			Paramètre SVG à utiliser pour la génération du plan. Dépend de la configuration de la laser.
+    		</em>
+    	</p>
+		<div>
+			<label title="Couleur du trait en notation hexa (rouge par défaut)">
+				<span>Couleur du trait:</span>
+				<input type="text" id="lineColor" value="#ff0000" /></label>
+		</div>
+		<div>
+			<label title="Epaisseur du trait (0.025 par défaut)">
+				<span>Epaisseur du trait :</span>
+				<input type="text" id="lineThickness" value="0.025" />mm</label>
+		</div>
+
+        <h2>Paramètres Boite</h2>
+    	<p>
+    		<em>
+    			Caractéristiques de la boite
+    		</em>
+    	</p>
 		<div>
 			<label title="Largeur de la boite">
 				<span>Largeur :</span>
@@ -115,7 +149,7 @@
 		<div id="out"></div>
 	</fieldset>
 	<div id="footer">Outil sous licence <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank">AGPLv3</a> - Sources sur
-		<a href="https://github.com/bumblebeefr/svg-box-generator" target="_blank">github</a>
+		<a href="https://github.com/jsiobj/svg-box-generator" target="_blank">github</a> - Outil original : <a href="https://github.com/bumblebeefr/svg-box-generator" target="_blank">github</a>
 	</div>
 	<script src="box_generator.js">
 	</script>
